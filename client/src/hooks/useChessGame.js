@@ -25,6 +25,11 @@ export default function useChessGame(playerColor = "w", initialTimeSeconds = 5 *
         playAudioForMove(move);
         setGame(gameCopy);
 
+        // TODO: Make this based on how much time the computer has left on their clock.
+        const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+        const waitMs = Math.floor(Math.random() * 3000) + 1000;
+        await delay(waitMs);
+
         const response = await getStockfishMove(gameCopy.fen());
         if (!response) return true;
 
