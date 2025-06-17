@@ -1,26 +1,43 @@
 import React from "react";
 import styles from "../styles/ChessControlls.module.css";
+import { useEffect, useRef, useState } from "react";
 
 export default function ChessControlls({
-  whiteTime,
-  blackTime,
   turn,
   boardWidth,
   onQuit,
   onTakeback,
-  selectedBot
+  selectedBot,
+  timeControl
 }) {
   const clockHeight = boardWidth * 1;
   const clockWidth = clockHeight * 0.4;
 
   const fontSize = clockHeight * 0.05;
+;
+const [whiteTime, setWhiteTime] = useState(timeControl * 60);
+const [blackTime, setBlackTime] = useState(timeControl * 60);
 
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
-    const s = (seconds % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  };
+useEffect(() => {
+  const interval = setInterval(() => {
+    if (turn === "w") {
+      setWhiteTime((prev) => Math.max(prev - 0.1, 0));
+    } else if (turn === "b") {
+      setBlackTime((prev) => Math.max(prev - 0.1, 0));
+    }
+  }, 100);
 
+  return () => clearInterval(interval);
+}, [turn]);
+
+
+const formatTime = (seconds) => {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  const t = Math.floor((seconds % 1) * 10); // tenths of a second
+
+  return `${m}:${s}.${t}`;
+};
   // Dynamic inline style only for font size (optional)
   const dynamicFontSizeStyle = { fontSize };
 
@@ -59,13 +76,15 @@ return (
         Takeback
       </button>
     </div>
-
-    <div
-      className={turn === "w" ? styles.whiteTurn : styles.whiteNotTurn}
-      style={dynamicFontSizeStyle}
-    >
-      White: {formatTime(whiteTime)}
-    </div>
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+  <div style={{ fontSize: fontSize * 0.8, marginBottom: 2 }}>You</div>
+  <div
+    className={turn === "w" ? styles.whiteTurn : styles.whiteNotTurn}
+    style={dynamicFontSizeStyle}
+  >
+    White: {formatTime(whiteTime)}
+  </div>
+</div>
   </div>
 );
 

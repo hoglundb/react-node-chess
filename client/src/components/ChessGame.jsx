@@ -12,8 +12,8 @@ const moveSoundSrc = "/ChessMoveDefault.mp3";
 const captureSoundSrc = "/ChessMoveCapture.mp3";
 
 export default function ChessGame({selectedBot, timeControl}) {
-  const playAudioForMove = useMoveAudio(moveSoundSrc, captureSoundSrc);
 
+  const playAudioForMove = useMoveAudio(moveSoundSrc, captureSoundSrc);
   const {
     game,
     onDrop,
@@ -32,7 +32,7 @@ export default function ChessGame({selectedBot, timeControl}) {
   const boardWidth = defaultWidth;
 
 return (
-  <div className={styles.page}>
+  <div className={styles.page}>    
     <div className={styles.container}>
       <div>
         <Chessboard
@@ -53,6 +53,7 @@ return (
         onTakeback={onTakeback}
         onQuit={onQuit}
         selectedBot={selectedBot}
+        timeControl={timeControl}
       />
 
       {/* Conditionally render the EndGameOverlay only when gameResult exists */}
@@ -60,6 +61,4 @@ return (
     </div>
   </div>
 );
-
-
 }

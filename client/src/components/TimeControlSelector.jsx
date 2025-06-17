@@ -13,7 +13,7 @@ export default function TimeControlSelector({ value, onChange }) {
         <option value={2}>2 minutes (Bullet)</option>
         <option value={3}>3 minutes (Bullet)</option>
         <option value={5}>5 minutes (Blitz)</option>
-        <option value={10}>10 minutes</option>
+        <option value={10}>10 minutes (Rapid)</option>
       </select>
     </div>
   );

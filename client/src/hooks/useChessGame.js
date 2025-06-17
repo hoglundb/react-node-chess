@@ -34,7 +34,6 @@ const getGameResult = (chessInstance) => {
 };
 
 
-
   const onDrop = useCallback(
     async (source, target) => {
       if (!isPlayerTurn) return false;
@@ -56,7 +55,6 @@ const getGameResult = (chessInstance) => {
         setGame(gameCopy);
 
         const result = getGameResult(gameCopy);
-        console.log(result);
         if (result) setGameResult(result);
 
         if (result) return true;
