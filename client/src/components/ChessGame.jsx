@@ -21,7 +21,7 @@ export default function ChessGame({selectedBot, timeControl}) {
     isPlayerTurn,
     gameResult
 
-  } = useChessGame("w", 5 * 60, playAudioForMove);
+  } = useChessGame("w", 5 * 60, playAudioForMove, selectedBot.depth);
 
   const { whiteTime, blackTime } = useChessTimer(game, 5 * 60);
 

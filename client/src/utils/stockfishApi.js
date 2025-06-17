@@ -1,4 +1,5 @@
-export async function getStockfishMove(fen, depth = 12) {
+export async function getStockfishMove(fen, depth) {
+  console.log(depth);
   try {
     const url = `/api/stockfish?fen=${encodeURIComponent(fen)}&depth=${depth}`;
     const response = await fetch(url);

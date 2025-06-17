@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 
 app.get("/api/stockfish", async (req, res) => {
   const { fen, depth = 12 } = req.query;
-
+  console.log(req.url);
   if (!fen) {
     return res.status(400).json({ error: "FEN string is required." });
   }

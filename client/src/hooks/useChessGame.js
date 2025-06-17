@@ -2,44 +2,47 @@ import { useState, useCallback } from "react";
 import { Chess } from "chess.js";
 import { getStockfishMove } from "../utils/stockfishApi";
 
-export default function useChessGame(playerColor = "w", initialTimeSeconds = 5 * 60, playAudioForMove) {
+export default function useChessGame(
+  playerColor = "w",
+  initialTimeSeconds = 5 * 60,
+  playAudioForMove,
+  computerMoveStrength
+) {
   const [game, setGame] = useState(new Chess());
-  const [gameResult, setGameResult] = useState(null); // null | "white" | "black" | "draw"
+  const [gameResult, setGameResult] = useState(null); // null | {winner, reason}
 
   const isPlayerTurn = game.turn() === playerColor;
 
-const getGameResult = (chessInstance) => {
-  if (!chessInstance.isGameOver()) return null;
+  const getGameResult = (chessInstance) => {
+    if (!chessInstance.isGameOver()) return null;
 
-  if (chessInstance.isCheckmate()) {
-    return {
-      winner: chessInstance.turn() === "w" ? "black" : "white",
-      reason: "checkmate",
-    };
-  }
+    if (chessInstance.isCheckmate()) {
+      return {
+        winner: chessInstance.turn() === "w" ? "black" : "white",
+        reason: "checkmate",
+      };
+    }
 
-  if (chessInstance.isStalemate()) {
-    return { winner: null, reason: "stalemate" };
-  }
+    if (chessInstance.isStalemate()) {
+      return { winner: null, reason: "stalemate" };
+    }
 
-  if (chessInstance.isInsufficientMaterial()) {
-    return { winner: null, reason: "insufficient_material" };
-  }
+    if (chessInstance.isInsufficientMaterial()) {
+      return { winner: null, reason: "insufficient_material" };
+    }
 
-  if (chessInstance.isDraw()) {
-    return { winner: null, reason: "draw" };
-  }
+    if (chessInstance.isDraw()) {
+      return { winner: null, reason: "draw" };
+    }
 
-  return { winner: null, reason: "unknown" };
-};
-
+    return { winner: null, reason: "unknown" };
+  };
 
   const onDrop = useCallback(
     async (source, target) => {
       if (!isPlayerTurn) return false;
 
-    //  try {
-     
+      try {
         const gameCopy = new Chess();
         gameCopy.loadPgn(game.pgn());
 
@@ -63,9 +66,8 @@ const getGameResult = (chessInstance) => {
         const delay = (ms) => new Promise((res) => setTimeout(res, ms));
         const waitMs = Math.floor(Math.random() * 3000) + 1000;
         await delay(waitMs);
-
-        const response = await getStockfishMove(gameCopy.fen());
-
+        console.log(computerMoveStrength);
+        const response = await getStockfishMove(gameCopy.fen(), computerMoveStrength);
         if (!response) return true;
 
         const updatedGame = new Chess();
@@ -82,19 +84,16 @@ const getGameResult = (chessInstance) => {
           setGame(updatedGame);
 
           const result2 = getGameResult(updatedGame);
-          console.log(result2);
           if (result2) {
-            console.log("setting game result");
-                 console.log(result2);
             setGameResult(result2);
           }
         }
 
         return true;
-      // } catch (err) {
-      //   console.log("Illegal move?", err);
-      //   return false;
-      // }
+      } catch (err) {
+        console.log("Illegal move?", err);
+        return false;
+      }
     },
     [game, isPlayerTurn, playAudioForMove]
   );
@@ -118,11 +117,15 @@ const getGameResult = (chessInstance) => {
   }, [game, playerColor]);
 
   const getStatusText = useCallback(() => {
-    if (gameResult === "draw") return "Game Drawn.";
-    if (gameResult === "white") return "White Wins!";
-    if (gameResult === "black") return "Black Wins!";
-    if (game.isGameOver()) return "Game Over.";
-    return game.turn() === "w" ? "White to move" : "Black to move";
+    if (!gameResult) {
+      return game.turn() === "w" ? "White to move" : "Black to move";
+    }
+    if (gameResult.reason === "draw" || gameResult.reason === "stalemate" || gameResult.reason === "insufficient_material") {
+      return "Game Drawn.";
+    }
+    if (gameResult.winner === "white") return "White Wins!";
+    if (gameResult.winner === "black") return "Black Wins!";
+    return "Game Over.";
   }, [game, gameResult]);
 
   return {
@@ -131,6 +134,6 @@ const getGameResult = (chessInstance) => {
     onTakeback,
     isPlayerTurn,
     getStatusText,
-    gameResult,       // expose for your UI to show endgame overlay
+    gameResult, // expose for UI (endgame overlay)
   };
 }
