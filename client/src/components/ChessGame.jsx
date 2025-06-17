@@ -10,15 +10,14 @@ const defaultWidth = 700;
 const moveSoundSrc = "/ChessMoveDefault.mp3";
 const captureSoundSrc = "/ChessMoveCapture.mp3";
 
-export default function ChessGame() {
+export default function ChessGame({selectedBot, timeControl}) {
   const playAudioForMove = useMoveAudio(moveSoundSrc, captureSoundSrc);
-
+  console.log(selectedBot);
   const {
     game,
     onDrop,
     onTakeback,
     isPlayerTurn,
-    getStatusText,
   } = useChessGame("w", 5 * 60, playAudioForMove);
 
   const { whiteTime, blackTime } = useChessTimer(game, 5 * 60);
@@ -37,7 +36,6 @@ export default function ChessGame() {
     <div className={styles.page}>
       <div className={styles.container}>
         <div>
-          <p className={styles.status}>{getStatusText()}</p>
           <Chessboard
             id="main-board"
             position={game.fen()}
@@ -56,6 +54,7 @@ export default function ChessGame() {
           onTakeback={onTakeback}
           onResign={onResign}
           onAbort={onAbort}
+          selectedBot = {selectedBot}
         />
       </div>
     </div>

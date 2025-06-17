@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../styles/BotSelector.module.css";
 
 const bots = [
@@ -11,27 +11,43 @@ const bots = [
 ];
 
 export default function BotSelector({ value, onChange }) {
-  return (
-    <div>
-      <div className={styles.botSelectorWrapper}>
-  <div className={styles.BotSelector}>
-    {bots.map((bot) => (
-      <div
-        key={bot.id}
-        className={`${styles.botCard} ${value === bot.level ? styles.selected : ""}`}
-        onClick={() => onChange(bot.level)}
-      >
-        <img src={bot.image} alt={bot.name} />
-        <div className={styles.botInfo}>
-          <strong>{bot.name}</strong>
-          <div>FIDE Rating: {bot.rating}</div>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+  const [selectedBot, setSelectedBot] = useState(value || bots[0]);
 
+  useEffect(() => {
+    if (!value) {
+      // Initialize external handler if no value provided
+      onChange && onChange(bots[0]);
+    } else {
+      setSelectedBot(value);
+    }
+  }, [value, onChange]);
+
+  function handleClick(bot) {
+    setSelectedBot(bot);
+    onChange && onChange(bot);
+  }
+
+  return (
+    <div className={styles.botSelectorWrapper}>
+      <div className={styles.BotSelector}>
+        {bots.map((bot) => {
+          const isSelected = selectedBot?.id === bot.id;
+
+          return (
+            <div
+              key={bot.id}
+              className={`${styles.botCard} ${isSelected ? styles.selected : ""}`}
+              onClick={() => handleClick(bot)}
+            >
+              <img src={bot.image} alt={bot.name} />
+              <div className={styles.botInfo}>
+                <strong>{bot.name}</strong>
+                <div>FIDE Rating: {bot.rating}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
-

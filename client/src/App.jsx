@@ -1,27 +1,29 @@
 import React, { useState } from "react";
 import ChessGame from "./components/ChessGame";
-import GameSetupControls from "./components/GameSetupControls"; // import the new combined component
+import GameSetupControls from "./components/GameSetupControls";
 import "./App.css";
 
 function App() {
-  const [botLevel, setBotLevel] = useState(1);
+  const [selectedBot, setSelectedBot] = useState(null);
   const [timeControlMinutes, setTimeControlMinutes] = useState(5);
+  const [gameStarted, setGameStarted] = useState(false);
 
   return (
     <div className="app-container">
-      <h1 style = {{margin:"20px"}} >My React Chess App</h1>
-      <h2 style={{ margin: "2px" }}>Select a bot and time control</h2>
-
-      <GameSetupControls
-        selectedBot={botLevel}
-        onBotChange={setBotLevel}
-        selectedTimeControl={timeControlMinutes}
-        onTimeControlChange={setTimeControlMinutes}
-      />
-
-      {/* Uncomment when ready to render the game */}
-      {/* <ChessGame botLevel={botLevel} timeControl={timeControlMinutes} /> */}
+      <h1 style={{ margin: "12px", fontSize:"26pt" }}>My React Chess App</h1>    
+      {!gameStarted ? (
+        <GameSetupControls
+          selectedBot={selectedBot}
+          onBotChange={setSelectedBot}
+          selectedTimeControl={timeControlMinutes}
+          onTimeControlChange={setTimeControlMinutes}
+          onStartGame ={() => setGameStarted(true)}  // pass start callback
+        />
+      ) : (
+       <ChessGame selectedBot={selectedBot} timeControl={timeControlMinutes} />
+      )}
     </div>
+
   );
 }
 

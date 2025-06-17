@@ -23,10 +23,10 @@
 .botCard {
   cursor: pointer;
   border: 1px solid #ccc;
-  padding: .5rem;
+  padding: 0.5rem;
   text-align: center;
   border-radius: 8px;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
   user-select: none;
 
   display: flex;
@@ -35,14 +35,15 @@
   align-items: center;
 }
 
-
 .botCard:hover {
   border-color: #007bff;
 }
 
 .selected {
-  border-color: #007bff;
-  background-color: #e0f0ff;
+  border-color: #007bff !important;
+  background-color: #cce5ff !important;
+  border-width: 3px !important;
+  box-shadow: 0 0 8px #007bff;
 }
 
 .botInfo {

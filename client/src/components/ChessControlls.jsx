@@ -9,6 +9,7 @@ export default function ChessControlls({
   onResign,
   onAbort,
   onTakeback,
+  selectedBot
 }) {
   const clockHeight = boardWidth * 1;
   const clockWidth = clockHeight * 0.4;
@@ -24,30 +25,52 @@ export default function ChessControlls({
   // Dynamic inline style only for font size (optional)
   const dynamicFontSizeStyle = { fontSize };
 
-  return (
-    <div
-      className={styles.container}
-      style={{ height: clockHeight, width: clockWidth, fontSize }}
-    >
+return (
+  <div
+    className={styles.container}
+    style={{ height: clockHeight, width: clockWidth, fontSize }}
+  >
+    {/* Group black clock and bot info */}
+    <div>
       <div className={turn === "b" ? styles.blackTurn : styles.blackNotTurn} style={dynamicFontSizeStyle}>
         Black: {formatTime(blackTime)}
       </div>
 
-      <div className={styles.buttons}>
-        <button onClick={onResign} className={styles.button} style={{ fontSize: fontSize * 0.8 }}>
-          Resign
-        </button>
-        <button onClick={onAbort} className={styles.button} style={{ fontSize: fontSize * 0.8 }}>
-          Abort
-        </button>
-        <button onClick={onTakeback} className={styles.button} style={{ fontSize: fontSize * 0.8 }}>
-          Takeback
-        </button>
-      </div>
+      {selectedBot && (
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: 0 }}>
+          <img
+            src={selectedBot.image}
+            alt={selectedBot.name}
+            style={{ width: 40, height: 55, borderRadius: "50%" }}
+          />
 
-      <div className={turn === "w" ? styles.whiteTurn : styles.whiteNotTurn} style={dynamicFontSizeStyle}>
-        White: {formatTime(whiteTime)}
-      </div>
+          <div>
+           <div style={{ fontSize: "25px"}}>{selectedBot.name}</div>
+            <div style={{ fontSize: "19px"}}>Rating: {selectedBot.rating}</div>
+          </div>
+        </div>
+      )}
     </div>
-  );
+
+    <div className={styles.buttons}>
+      <button onClick={onResign} className={styles.button} style={{ fontSize: fontSize * 0.8 }}>
+        Resign
+      </button>
+      <button onClick={onAbort} className={styles.button} style={{ fontSize: fontSize * 0.8 }}>
+        Abort
+      </button>
+      <button onClick={onTakeback} className={styles.button} style={{ fontSize: fontSize * 0.8 }}>
+        Takeback
+      </button>
+    </div>
+
+    <div
+      className={turn === "w" ? styles.whiteTurn : styles.whiteNotTurn}
+      style={dynamicFontSizeStyle}
+    >
+      White: {formatTime(whiteTime)}
+    </div>
+  </div>
+);
+
 }
