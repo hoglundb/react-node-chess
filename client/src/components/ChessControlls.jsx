@@ -6,8 +6,7 @@ export default function ChessControlls({
   blackTime,
   turn,
   boardWidth,
-  onResign,
-  onAbort,
+  onQuit,
   onTakeback,
   selectedBot
 }) {
@@ -53,11 +52,8 @@ return (
     </div>
 
     <div className={styles.buttons}>
-      <button onClick={onResign} className={styles.button} style={{ fontSize: fontSize * 0.8 }}>
-        Resign
-      </button>
-      <button onClick={onAbort} className={styles.button} style={{ fontSize: fontSize * 0.8 }}>
-        Abort
+      <button onClick={onQuit} className={styles.button} style={{ fontSize: fontSize * 0.8 }}>
+        Quit
       </button>
       <button onClick={onTakeback} className={styles.button} style={{ fontSize: fontSize * 0.8 }}>
         Takeback

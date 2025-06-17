@@ -4,6 +4,7 @@ import ChessControlls from "./ChessControlls";
 import useChessGame from "../hooks/useChessGame";
 import useChessTimer from "../hooks/useChessTimer";
 import useMoveAudio from "../hooks/useMoveAudio";
+import EndGameOverlay from "./EndGameOverlay";
 import styles from "../styles/ChessGame.module.css"; 
 
 const defaultWidth = 700;
@@ -12,51 +13,53 @@ const captureSoundSrc = "/ChessMoveCapture.mp3";
 
 export default function ChessGame({selectedBot, timeControl}) {
   const playAudioForMove = useMoveAudio(moveSoundSrc, captureSoundSrc);
-  console.log(selectedBot);
+
   const {
     game,
     onDrop,
     onTakeback,
     isPlayerTurn,
+    gameResult
+
   } = useChessGame("w", 5 * 60, playAudioForMove);
 
   const { whiteTime, blackTime } = useChessTimer(game, 5 * 60);
 
-  const onResign = () => {
-    alert("Resign clicked - add your resign logic here");
-  };
-
-  const onAbort = () => {
-    alert("Abort clicked - add your abort logic here");
+  const onQuit = () => {
+    window.location.reload();
   };
 
   const boardWidth = defaultWidth;
 
-  return (
-    <div className={styles.page}>
-      <div className={styles.container}>
-        <div>
-          <Chessboard
-            id="main-board"
-            position={game.fen()}
-            onPieceDrop={onDrop}
-            arePiecesDraggable={isPlayerTurn}
-            boardWidth={boardWidth}
-            customBoardStyle={{ borderRadius: "12px", boxShadow: "0 0 20px rgba(0, 0, 0, 0.1)" }}
-          />
-        </div>
-
-        <ChessControlls
-          whiteTime={whiteTime}
-          blackTime={blackTime}
-          turn={game.turn()}
+return (
+  <div className={styles.page}>
+    <div className={styles.container}>
+      <div>
+        <Chessboard
+          id="main-board"
+          position={game.fen()}
+          onPieceDrop={onDrop}
+          arePiecesDraggable={isPlayerTurn && !gameResult}  // disable drag if game over
           boardWidth={boardWidth}
-          onTakeback={onTakeback}
-          onResign={onResign}
-          onAbort={onAbort}
-          selectedBot = {selectedBot}
+          customBoardStyle={{ borderRadius: "12px", boxShadow: "0 0 20px rgba(0, 0, 0, 0.1)" }}
         />
       </div>
+
+      <ChessControlls
+        whiteTime={whiteTime}
+        blackTime={blackTime}
+        turn={game.turn()}
+        boardWidth={boardWidth}
+        onTakeback={onTakeback}
+        onQuit={onQuit}
+        selectedBot={selectedBot}
+      />
+
+      {/* Conditionally render the EndGameOverlay only when gameResult exists */}
+      {gameResult && <EndGameOverlay gameResult={gameResult} />}
     </div>
-  );
+  </div>
+);
+
+
 }
